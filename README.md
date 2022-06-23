@@ -1,20 +1,11 @@
-# Introduction 
-TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project. 
+# Introduction
 
-# Getting Started
-TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
-1.	Installation process
-2.	Software dependencies
-3.	Latest releases
-4.	API references
+Simple command/query pipeline implementation in .NET
 
-# Build and Test
-TODO: Describe and show how to build your code and run the tests. 
+* CSharpMicroManger.CQRS
+  [![Build Status](https://dev.azure.com/czadokonrad/CSharpMicroManager/_apis/build/status/CSharpMicroManager.CQRS?repoName=CSharpMicroManager.CQRS&branchName=main)](https://dev.azure.com/czadokonrad/CSharpMicroManager/_build/latest?definitionId=6&repoName=CSharpMicroManager.CQRS&branchName=main)
 
-# Contribute
-TODO: Explain how other users and developers can contribute to make your code better. 
-
-If you want to learn more about creating good readme files then refer the following [guidelines](https://docs.microsoft.com/en-us/azure/devops/repos/git/create-a-readme?view=azure-devops). You can also seek inspiration from the below readme files:
-- [ASP.NET Core](https://github.com/aspnet/Home)
-- [Visual Studio Code](https://github.com/Microsoft/vscode)
-- [Chakra Core](https://github.com/Microsoft/ChakraCore)
+* CSharpMicroManger.CQRS.Abstractions
+  [![Build Status](https://dev.azure.com/czadokonrad/CSharpMicroManager/_apis/build/status/CSharpMicroManager.CQRS.Abstractions?repoName=CSharpMicroManager.CQRS&branchName=main)](https://dev.azure.com/czadokonrad/CSharpMicroManager/_build/latest?definitionId=7&repoName=CSharpMicroManager.CQRS&branchName=main)
+* CSharpMicroManger.CQRS.Extensions
+  [![Build Status](https://dev.azure.com/czadokonrad/CSharpMicroManager/_apis/build/status/CSharpMicroManager.CQRS.Extensions?repoName=CSharpMicroManager.CQRS&branchName=main)](https://dev.azure.com/czadokonrad/CSharpMicroManager/_build/latest?definitionId=24&repoName=CSharpMicroManager.CQRS&branchName=main)
