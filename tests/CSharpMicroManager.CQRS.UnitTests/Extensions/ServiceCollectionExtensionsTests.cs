@@ -140,46 +140,7 @@ public class ServiceCollectionExtensionsTests
 
         Assert.IsNotNull(queryHandler);
     }
-
-    [Test]
-    public async Task When_CommandHandlers_Registered_And_Decorator_With_CommandHandlerAttribute_Applied_Then_Command_Handlers_Should_Be_Wrapped_In_Decorator()
-    {
-        var services = new ServiceCollection().
-            AddLogging().
-            AddTransient(typeof(MockDomainEventsDispatcher)).
-            AddTransient(typeof(MockUnitOfWork)).
-            AddCommandHandlers(typeof(TestCommandHandler).Assembly).
-            DecorateCommandHandlersWith(typeof(DomainEventsHandlerCommandHandlerDecorator<>)).
-            DecorateCommandHandlersWith(typeof(UnitOfWorkCommandHandlerDecorator<>));
-
-        var sp = services.BuildServiceProvider();
-        var commandHandler = sp.GetRequiredService<ICommandHandler<TestCommand>>();
-
-        await commandHandler.Handle(new TestCommand(), default);
-
-        Assert.IsTrue(MockDomainEventsDispatcher.InvokeCount == 1);
-        Assert.IsTrue(MockUnitOfWork.InvokeCount == 1);
-    }
-
-
-    [Test]
-    public async Task When_CommandHandlers_Registered_Using_AddCommandHandlerDecoratorsAnd_Then_Command_Handlers_Should_Be_Wrapped_In_Decorators_InCorrectOrder()
-    {
-        var services = new ServiceCollection().
-            AddLogging().
-            AddTransient(typeof(MockDomainEventsDispatcher)).
-            AddTransient(typeof(MockUnitOfWork)).
-            AddCommandHandlers(typeof(TestCommandHandler).Assembly).
-            AddCommandHandlerDecorators(typeof(DomainEventsHandlerCommandHandlerDecorator<>).Assembly);
-
-        var sp = services.BuildServiceProvider();
-        var commandHandler = sp.GetRequiredService<ICommandHandler<TestCommand>>();
-
-        await commandHandler.Handle(new TestCommand(), default);
-
-        Assert.IsTrue(MockDomainEventsDispatcher.InvokeCount == 1);
-        Assert.IsTrue(MockUnitOfWork.InvokeCount == 1);
-    }
+    
     private sealed class MockDomainEventsDispatcher
     {
         public static int InvokeCount;
