@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Version>1.0.0-pre</Version>
+    <IncludeSymbols>true</IncludeSymbols>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <LangVersion>Preview</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="10.3.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CSharpMicroManager.CQRS.Abstractions\CSharpMicroManager.CQRS.Abstractions.csproj" />
+    <ProjectReference Include="..\CSharpMicroManager.CQRS\CSharpMicroManager.CQRS.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Outbox" />
+  </ItemGroup>
+
+</Project>

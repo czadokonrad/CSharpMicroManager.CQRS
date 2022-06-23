@@ -1,0 +1,23 @@
+# ASP.NET Core
+# Build and test ASP.NET Core projects targeting .NET Core.
+# Add steps that run tests, create a NuGet package, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+resources:
+ repositories:
+   - repository: templates
+     type: git
+     name: CSharpMicroManager/CSharpMicroManager.Pipelines
+
+trigger:
+ branches:
+   include:
+     - main
+ paths:
+   include:
+     - src/CSharpMicroManager.CQRS.Extensions/CSharpMicroManager.CQRS.Extensions.csproj
+
+jobs:
+- template: build-nuget-from-class-library-template.yml@templates
+  parameters:
+    projectName: 'CSharpMicroManager.CQRS.Extensions'
