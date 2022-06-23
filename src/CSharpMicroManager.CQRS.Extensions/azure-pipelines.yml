@@ -13,9 +13,6 @@ trigger:
  branches:
    include:
      - main
- paths:
-   include:
-     - src/CSharpMicroManager.CQRS.Extensions/CSharpMicroManager.CQRS.Extensions.csproj
 
 jobs:
 - template: build-nuget-from-class-library-template.yml@templates
