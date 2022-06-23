@@ -20,6 +20,7 @@ public class CanExecuteRequestedCommandPipeTests
     public async Task ShouldReturnError_WhenRequiredPermissions_AreNotMetOnClassLevel()
     {
         var serviceCollection = new ServiceCollection()
+            .AddLogging()
             .AddTransient<IUserContext, FakeUserContext>()
             .AddCommandHandler<TestCommand, TestCommandHandler>()
             .AddCommandPipelines(d => d
@@ -39,6 +40,7 @@ public class CanExecuteRequestedCommandPipeTests
     public async Task ShouldReturnError_WhenRequiredPermissions_AreNotMetOnPropertyLevel()
     {
         var serviceCollection = new ServiceCollection()
+            .AddLogging()
             .AddTransient<IUserContext, FakeUserContext>()
             .AddCommandHandler<TestPropertyCommand, TestPropertyCommandHandler>()
             .AddCommandPipelines(d => d
@@ -58,6 +60,7 @@ public class CanExecuteRequestedCommandPipeTests
     public async Task ShouldExecuteCommand_WhenRequiredPermissions_AreMetOnClassLevel()
     {
         var serviceCollection = new ServiceCollection()
+            .AddLogging()
             .AddTransient<IUserContext>(sp => new FakeUserContext(new List<Guid>
             {
                 new TestCommandPermission().Id
@@ -80,6 +83,7 @@ public class CanExecuteRequestedCommandPipeTests
     public async Task ShouldExecuteCommand_WhenRequiredPermissions_AreMetOnPropertyLevel()
     {
         var serviceCollection = new ServiceCollection()
+            .AddLogging()
             .AddTransient<IUserContext>(sp => new FakeUserContext(new List<Guid>
             {
                 new TestPropertyPermission().Id

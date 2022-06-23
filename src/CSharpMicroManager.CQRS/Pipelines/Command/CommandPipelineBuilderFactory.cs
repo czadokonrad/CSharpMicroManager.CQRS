@@ -3,16 +3,21 @@ using CSharpMicroManager.CQRS.Abstractions.Pipelines.Command.Handle;
 using CSharpMicroManager.CQRS.Abstractions.Pipelines.Command.PostHandle;
 using CSharpMicroManager.CQRS.Abstractions.Pipelines.Command.PreHandle;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace CSharpMicroManager.CQRS.Pipelines.Command;
 
 internal sealed class CommandPipelineBuilderFactory
 {
     private readonly IServiceProvider _serviceProvider;
+    private readonly ILoggerFactory _loggerFactory;
 
-    public CommandPipelineBuilderFactory(IServiceProvider serviceProvider)
+    public CommandPipelineBuilderFactory(
+        IServiceProvider serviceProvider,
+        ILoggerFactory loggerFactory)
     {
         _serviceProvider = serviceProvider;
+        _loggerFactory = loggerFactory;
     }
 
     public CommandHandlerPipeWrapper<TCommand> CreatePipeline<TCommand>()
@@ -21,7 +26,8 @@ internal sealed class CommandPipelineBuilderFactory
         return new CommandHandlerPipeWrapper<TCommand>(
             GetCommandPreHandler<TCommand>(_serviceProvider),
             GetCommandHandler<TCommand>(_serviceProvider),
-            GetCommandPostHandler<TCommand>(_serviceProvider));
+            GetCommandPostHandler<TCommand>(_serviceProvider),
+            _loggerFactory.CreateLogger<CommandHandlerPipeWrapper<TCommand>>());
     }
     
     private CommandPreHandlerPipelineDelegate<TCommand> GetCommandPreHandler<TCommand>(IServiceProvider serviceProvider) where TCommand : ICommand
