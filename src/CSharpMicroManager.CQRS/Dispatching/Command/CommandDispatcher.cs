@@ -2,23 +2,33 @@
 using CSharpMicroManager.CQRS.Abstractions.Dispatching.Command;
 using CSharpMicroManager.CQRS.Pipelines.Command;
 using CSharpMicroManager.Functional.Core;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace CSharpMicroManager.CQRS.Dispatching.Command;
 
 internal sealed class CommandDispatcher : ICommandDispatcher
 {
-    private readonly IServiceProvider _serviceProvider;
+    private readonly ServiceResolver _serviceResolver;
 
-    public CommandDispatcher(IServiceProvider serviceProvider)
+    public CommandDispatcher(ServiceResolver serviceResolver)
     {
-        _serviceProvider = serviceProvider;
+        _serviceResolver = serviceResolver;
     }
 
     public Task<Result<Unit>> Handle<TCommand>(TCommand command, CancellationToken cancellationToken)
         where TCommand : ICommand =>
-        _serviceProvider
-            .GetRequiredService<CommandPipelineBuilderFactory<TCommand>>()
+        _serviceResolver
+            .Get<CommandPipelineBuilderFactory<TCommand>>()
             .CreatePipeline()
             .Handle(command, cancellationToken);
+}
+
+public delegate object ServiceResolver(Type type);
+
+public static class ServiceResolverExtensions
+{
+    public static T Get<T>(this ServiceResolver serviceResolver) where T : class
+    {
+        var service = serviceResolver(typeof(T));
+        return (T) service;
+    }
 }

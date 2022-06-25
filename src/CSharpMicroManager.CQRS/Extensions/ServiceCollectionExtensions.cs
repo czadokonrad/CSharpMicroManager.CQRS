@@ -63,6 +63,7 @@ public static class ServiceCollectionExtensions
         });
 
         return services
+            .AddTransient<ServiceResolver>(sp => sp.GetRequiredService)
             .AddTransient<ICommandDispatcher, CommandDispatcher>()
             .AddTransient(typeof(ICommandPreHandlerPipelineBuilder<>), typeof(CommandPreHandlerPipelineBuilder<>))
             .AddTransient(typeof(ICommandHandlerPipelineBuilder<>), typeof(CommandHandlerPipelineBuilder<>))
