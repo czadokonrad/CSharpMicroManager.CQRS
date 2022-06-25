@@ -28,13 +28,13 @@ internal sealed class CanExecuteRequestedCommandPipe<TCommand> : ICommandPreHand
     }
     
     public async Task<Result<Unit>> Handle(
-        CommandPreHandlerPipelineContext<TCommand> context, 
+        TCommand command, 
         CommandPreHandlerPipelineDelegate<TCommand> next,
         CancellationToken cancellationToken)
     {
         if (await CanExecuteCommand())
         {
-            return await next(context, cancellationToken);
+            return await next(command, cancellationToken);
         }
 
         return new Result<Unit>(new CannotExecuteRequestedCommandError());

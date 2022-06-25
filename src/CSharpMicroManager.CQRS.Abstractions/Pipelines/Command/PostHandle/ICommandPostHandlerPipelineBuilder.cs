@@ -14,5 +14,6 @@ public interface ICommandPostHandlerPipelineBuilder<TCommand> where TCommand : I
     ICommandPostHandlerPipelineBuilder<TCommand> UsePipe<TCommandPostHandlerPipe>() where 
         TCommandPostHandlerPipe : class, ICommandPostHandlerPipe<TCommand>, new();
     CommandPostHandlerPipelineDelegate<TCommand> Build();
+    CommandPostHandlerPipelineDelegate<TCommand> Build(IEnumerable<ICommandPostHandlerPipe<TCommand>> pipes);
     IReadOnlyCollection<Func<CommandPostHandlerPipelineDelegate<TCommand>, CommandPostHandlerPipelineDelegate<TCommand>>> Pipes { get; }
 }

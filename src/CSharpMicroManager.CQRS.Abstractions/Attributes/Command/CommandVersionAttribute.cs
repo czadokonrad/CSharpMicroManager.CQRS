@@ -6,10 +6,10 @@
 [AttributeUsage(AttributeTargets.Class)]
 public class CommandVersionAttribute : Attribute
 {
-    public ushort Version { get; }
-
     public CommandVersionAttribute(ushort version)
     {
         Version = version;
     }
+    
+    public ushort Version { get; }
 }

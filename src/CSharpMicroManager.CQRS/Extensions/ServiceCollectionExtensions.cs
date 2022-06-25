@@ -5,6 +5,9 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using CSharpMicroManager.CQRS.Abstractions.Dispatching.Command;
 using CSharpMicroManager.CQRS.Abstractions.Dispatching.Query;
+using CSharpMicroManager.CQRS.Abstractions.Pipelines.Command.Handle;
+using CSharpMicroManager.CQRS.Abstractions.Pipelines.Command.PostHandle;
+using CSharpMicroManager.CQRS.Abstractions.Pipelines.Command.PreHandle;
 using CSharpMicroManager.CQRS.Attributes.Command;
 using CSharpMicroManager.CQRS.Decorators.Command;
 using CSharpMicroManager.CQRS.Dispatching.Command;
@@ -61,7 +64,10 @@ public static class ServiceCollectionExtensions
 
         return services
             .AddTransient<ICommandDispatcher, CommandDispatcher>()
-            .AddTransient<CommandPipelineBuilderFactory>();
+            .AddTransient(typeof(ICommandPreHandlerPipelineBuilder<>), typeof(CommandPreHandlerPipelineBuilder<>))
+            .AddTransient(typeof(ICommandHandlerPipelineBuilder<>), typeof(CommandHandlerPipelineBuilder<>))
+            .AddTransient(typeof(ICommandPostHandlerPipelineBuilder<>), typeof(CommandPostHandlerPipelineBuilder<>))
+            .AddTransient(typeof(CommandPipelineBuilderFactory<>));
     }
     
     public static IServiceCollection AddQueryPipelines(

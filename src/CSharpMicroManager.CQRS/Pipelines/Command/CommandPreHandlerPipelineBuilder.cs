@@ -33,6 +33,16 @@ internal sealed class CommandPreHandlerPipelineBuilder<TCommand> : ICommandPreHa
         return this;
     }
 
+    public CommandPreHandlerPipelineDelegate<TCommand> Build(IEnumerable<ICommandPreHandlerPipe<TCommand>> pipes) 
+    {
+        foreach (var pipe in pipes)
+        {
+            UsePipe(next => (command, ct) => pipe.Handle(command, next, ct));
+        }
+
+        return Build();
+    }
+    
     public CommandPreHandlerPipelineDelegate<TCommand> Build()
     {
         CommandPreHandlerPipelineDelegate<TCommand> pipeline = (_, _) => 

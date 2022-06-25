@@ -16,13 +16,13 @@ internal sealed class HandlerErrorHandlingPipe<TCommand> : ICommandHandlerPipe<T
         _logger = logger;
     }
     public async Task<Result<Unit>> Handle(
-        CommandHandlerPipelineContext<TCommand> context, 
+        TCommand command, 
         CommandHandlerPipelineDelegate<TCommand> next,
         CancellationToken cancellationToken)
     {
         try
         {
-            return await next(context, cancellationToken);
+            return await next(command, cancellationToken);
         }
         catch (Exception ex)
         {

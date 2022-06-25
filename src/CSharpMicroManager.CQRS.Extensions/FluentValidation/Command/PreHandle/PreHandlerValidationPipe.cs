@@ -17,15 +17,17 @@ internal sealed class PreHandlerFluentValidationPipe<TCommand> : ICommandPreHand
         _validators = validators;
     }
 
-    public Task<Result<Unit>> Handle(CommandPreHandlerPipelineContext<TCommand> context,
-        CommandPreHandlerPipelineDelegate<TCommand> next, CancellationToken cancellationToken)
+    public Task<Result<Unit>> Handle(
+        TCommand command,
+        CommandPreHandlerPipelineDelegate<TCommand> next, 
+        CancellationToken cancellationToken)
     {
-        var result = _validators.Select(v => v.Validate(context.Command));
+        var result = _validators.Select(v => v.Validate(command));
 
         var validationResults = result.ToList();
         if (validationResults.All(r => r.IsValid))
         {
-            return next(context, cancellationToken);
+            return next(command, cancellationToken);
         }
 
         var errors = validationResults

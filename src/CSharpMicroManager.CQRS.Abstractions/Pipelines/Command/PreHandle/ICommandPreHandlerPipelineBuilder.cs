@@ -13,6 +13,8 @@ public interface ICommandPreHandlerPipelineBuilder<TCommand> where TCommand : IC
     ICommandPreHandlerPipelineBuilder<TCommand> UsePipe(ICommandPreHandlerPipe<TCommand> pipe);
     ICommandPreHandlerPipelineBuilder<TCommand> UsePipe<TCommandPreHandlerPipe>() 
         where TCommandPreHandlerPipe : class, ICommandPreHandlerPipe<TCommand>, new();
+    
+    CommandPreHandlerPipelineDelegate<TCommand> Build(IEnumerable<ICommandPreHandlerPipe<TCommand>> pipes);
     CommandPreHandlerPipelineDelegate<TCommand> Build();
     IReadOnlyCollection<Func<CommandPreHandlerPipelineDelegate<TCommand>, CommandPreHandlerPipelineDelegate<TCommand>>> Pipes { get; }
 

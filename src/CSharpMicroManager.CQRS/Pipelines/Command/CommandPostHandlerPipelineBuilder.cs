@@ -1,5 +1,6 @@
 ﻿using CSharpMicroManager.CQRS.Abstractions.Commands;
 using CSharpMicroManager.CQRS.Abstractions.Pipelines.Command.PostHandle;
+using CSharpMicroManager.Functional.Core;
 
 namespace CSharpMicroManager.CQRS.Pipelines.Command;
 
@@ -31,11 +32,21 @@ internal sealed class CommandPostHandlerPipelineBuilder<TCommand> : ICommandPost
 
         return this;
     }
+    
+    public CommandPostHandlerPipelineDelegate<TCommand> Build(IEnumerable<ICommandPostHandlerPipe<TCommand>> pipes) 
+    {
+        foreach (var pipe in pipes)
+        {
+            UsePipe(next => (command, ct) => pipe.Handle(command, next, ct));
+        }
 
+        return Build();
+    }
+    
     public CommandPostHandlerPipelineDelegate<TCommand> Build()
     {
-        CommandPostHandlerPipelineDelegate<TCommand> pipeline = (ctx, _) => 
-            Task.FromResult(ctx.CommandHandlerResult);
+        CommandPostHandlerPipelineDelegate<TCommand> pipeline = (_, _) => 
+            Task.FromResult(new Result<Unit>(Unit.Value));
 
         for (int i = _pipes.Count - 1; i >= 0; i--)
         {

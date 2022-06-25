@@ -12,12 +12,12 @@ namespace CSharpMicroManager.CQRS.Abstractions.Pipelines.Command.PreHandle
         /// <summary>
         /// Handles single step of registered PreCommandHandlerPipeline by using <see cref="ICommandPreHandlerPipelineBuilder{TCommand}"/>
         /// </summary>
-        /// <param name="context">Contextual information</param>
+        /// <param name="command">Command to process</param>
         /// <param name="next">Next handler of type <see cref="ICommandPreHandlerPipe{TCommand}"/></param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns></returns>
         Task<Result<Unit>> Handle(
-            CommandPreHandlerPipelineContext<TCommand> context,
+            TCommand command,
             CommandPreHandlerPipelineDelegate<TCommand> next, 
             CancellationToken cancellationToken);
     }
@@ -28,6 +28,6 @@ namespace CSharpMicroManager.CQRS.Abstractions.Pipelines.Command.PreHandle
     /// </summary>
     /// <typeparam name="TCommand">Concrete type of <see cref="ICommand"/></typeparam>
     public delegate Task<Result<Unit>> CommandPreHandlerPipelineDelegate<TCommand>(
-        CommandPreHandlerPipelineContext<TCommand> context, 
+        TCommand command, 
         CancellationToken cancellationToken) where TCommand : ICommand;
 }

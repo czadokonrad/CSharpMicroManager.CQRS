@@ -18,15 +18,15 @@ where TCommand : ICommand
         _commandHandler = commandHandler;
     }
     public async Task<Result<Unit>> Handle(
-        CommandHandlerPipelineContext<TCommand> context, 
+        TCommand command, 
         CommandHandlerPipelineDelegate<TCommand> next,
         CancellationToken cancellationToken)
     {
-        var commandResult = await _commandHandler.Handle(context.Command, cancellationToken);
+        var commandResult = await _commandHandler.Handle(command, cancellationToken);
 
         if (!commandResult.IsError)
         {
-            return await next(context, cancellationToken);
+            return await next(command, cancellationToken);
         }
 
         return commandResult;

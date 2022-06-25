@@ -12,12 +12,12 @@ namespace CSharpMicroManager.CQRS.Abstractions.Pipelines.Command.PostHandle
         /// <summary>
         /// Handles single step of registered PostCommandHandlerPipeline by using <see cref="ICommandPostHandlerPipelineBuilder{TCommand}"/>
         /// </summary>
-        /// <param name="context">Contextual information</param>
+        /// <param name="command">Command to process</param>
         /// <param name="next">Next handler of type <see cref="ICommandPostHandlerPipe{TCommand}"/></param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns></returns>
         Task<Result<Unit>> Handle(
-          CommandPostHandlerPipelineContext<TCommand> context,
+          TCommand command,
           CommandPostHandlerPipelineDelegate<TCommand> next,
           CancellationToken cancellationToken);
     }
@@ -27,6 +27,6 @@ namespace CSharpMicroManager.CQRS.Abstractions.Pipelines.Command.PostHandle
     /// </summary>
     /// <typeparam name="TCommand">Concrete type of <see cref="ICommand"/></typeparam>
     public delegate Task<Result<Unit>> CommandPostHandlerPipelineDelegate<TCommand>(
-        CommandPostHandlerPipelineContext<TCommand> context,
+        TCommand command,
         CancellationToken cancellationToken) where TCommand : ICommand;
 }

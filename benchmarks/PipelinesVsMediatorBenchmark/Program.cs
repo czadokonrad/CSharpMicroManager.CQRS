@@ -82,7 +82,9 @@ namespace PipelinesVsMediatorBenchmark
 
     public class BenchmarkCommandPreHandler : ICommandPreHandlerPipe<BenchmarkCommand>
     {
-        public Task<Result<Unit>> Handle(CommandPreHandlerPipelineContext<BenchmarkCommand> context, CommandPreHandlerPipelineDelegate<BenchmarkCommand> next,
+        public Task<Result<Unit>> Handle(
+            BenchmarkCommand command,
+            CommandPreHandlerPipelineDelegate<BenchmarkCommand> next,
             CancellationToken cancellationToken)
         {
             return Task.FromResult(new Result<Unit>(Unit.Value));
@@ -99,7 +101,9 @@ namespace PipelinesVsMediatorBenchmark
 
     public class BenchmarkCommandPreHandler2 : ICommandPreHandlerPipe<BenchmarkCommand>
     {
-        public Task<Result<Unit>> Handle(CommandPreHandlerPipelineContext<BenchmarkCommand> context, CommandPreHandlerPipelineDelegate<BenchmarkCommand> next,
+        public Task<Result<Unit>> Handle(
+            BenchmarkCommand benchmarkCommand, 
+            CommandPreHandlerPipelineDelegate<BenchmarkCommand> next,
             CancellationToken cancellationToken)
         {
             return Task.FromResult(new Result<Unit>(Unit.Value));
@@ -116,7 +120,9 @@ namespace PipelinesVsMediatorBenchmark
 
     public class BenchmarkCommandPreHandler3 : ICommandPreHandlerPipe<BenchmarkCommand>
     {
-        public Task<Result<Unit>> Handle(CommandPreHandlerPipelineContext<BenchmarkCommand> context, CommandPreHandlerPipelineDelegate<BenchmarkCommand> next,
+        public Task<Result<Unit>> Handle(
+            BenchmarkCommand benchmarkCommand, 
+            CommandPreHandlerPipelineDelegate<BenchmarkCommand> next,
             CancellationToken cancellationToken)
         {
             return Task.FromResult(new Result<Unit>(Unit.Value));

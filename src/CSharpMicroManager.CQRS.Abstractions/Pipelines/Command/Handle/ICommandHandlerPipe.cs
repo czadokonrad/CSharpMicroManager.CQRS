@@ -12,12 +12,12 @@ public interface ICommandHandlerPipe<TCommand> where TCommand : ICommand
     /// <summary>
     /// Handles single step of registered CommandHandlerPipeline by using <see cref="ICommandHandlerPipelineBuilder{TCommand}"/>
     /// </summary>
-    /// <param name="context">Contextual information</param>
+    /// <param name="command">Command to process</param>
     /// <param name="next">Next handler of type <see cref="ICommandHandlerPipe{TCommand}"/></param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns></returns>
     Task<Result<Unit>> Handle(
-        CommandHandlerPipelineContext<TCommand> context,
+        TCommand command,
         CommandHandlerPipelineDelegate<TCommand> next,
         CancellationToken cancellationToken);
 }
@@ -27,5 +27,5 @@ public interface ICommandHandlerPipe<TCommand> where TCommand : ICommand
 /// </summary>
 /// <typeparam name="TCommand">Concrete type of <see cref="ICommand"/></typeparam>
 public delegate Task<Result<Unit>> CommandHandlerPipelineDelegate<TCommand>(
-    CommandHandlerPipelineContext<TCommand> context,
+    TCommand command,
     CancellationToken cancellationToken) where TCommand : ICommand;

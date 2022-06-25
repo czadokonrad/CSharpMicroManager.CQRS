@@ -2,70 +2,44 @@
 using CSharpMicroManager.CQRS.Abstractions.Pipelines.Command.Handle;
 using CSharpMicroManager.CQRS.Abstractions.Pipelines.Command.PostHandle;
 using CSharpMicroManager.CQRS.Abstractions.Pipelines.Command.PreHandle;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace CSharpMicroManager.CQRS.Pipelines.Command;
 
-internal sealed class CommandPipelineBuilderFactory
+internal sealed class CommandPipelineBuilderFactory<TCommand> where TCommand : ICommand
 {
-    private readonly IServiceProvider _serviceProvider;
+    private readonly ICommandPreHandlerPipelineBuilder<TCommand> _preHandlerPipeLineBuilder;
+    private readonly ICommandHandlerPipelineBuilder<TCommand> _handlerPipeLineBuilder;
+    private readonly ICommandPostHandlerPipelineBuilder<TCommand> _postHandlerPipeLineBuilder;
+    private readonly IEnumerable<ICommandPreHandlerPipe<TCommand>> _preHandlerPipes;
+    private readonly IEnumerable<ICommandHandlerPipe<TCommand>> _handlerPipes;
+    private readonly IEnumerable<ICommandPostHandlerPipe<TCommand>> _postHandlerPipes;
     private readonly ILoggerFactory _loggerFactory;
 
     public CommandPipelineBuilderFactory(
-        IServiceProvider serviceProvider,
+        ICommandPreHandlerPipelineBuilder<TCommand> preHandlerPipeLineBuilder,
+        ICommandHandlerPipelineBuilder<TCommand> handlerPipeLineBuilder,
+        ICommandPostHandlerPipelineBuilder<TCommand> postHandlerPipeLineBuilder,
+        IEnumerable<ICommandPreHandlerPipe<TCommand>> preHandlerPipes,
+        IEnumerable<ICommandHandlerPipe<TCommand>> handlerPipes,
+        IEnumerable<ICommandPostHandlerPipe<TCommand>> postHandlerPipes,
         ILoggerFactory loggerFactory)
     {
-        _serviceProvider = serviceProvider;
+        _preHandlerPipeLineBuilder = preHandlerPipeLineBuilder;
+        _handlerPipeLineBuilder = handlerPipeLineBuilder;
+        _postHandlerPipeLineBuilder = postHandlerPipeLineBuilder;
+        _preHandlerPipes = preHandlerPipes;
+        _handlerPipes = handlerPipes;
+        _postHandlerPipes = postHandlerPipes;
         _loggerFactory = loggerFactory;
     }
 
-    public CommandHandlerPipeWrapper<TCommand> CreatePipeline<TCommand>()
-        where TCommand : ICommand
+    public CommandHandlerPipeWrapper<TCommand> CreatePipeline()
     {
         return new CommandHandlerPipeWrapper<TCommand>(
-            GetCommandPreHandler<TCommand>(_serviceProvider),
-            GetCommandHandler<TCommand>(_serviceProvider),
-            GetCommandPostHandler<TCommand>(_serviceProvider),
+            _preHandlerPipeLineBuilder.Build(_preHandlerPipes),
+            _handlerPipeLineBuilder.Build(_handlerPipes),
+            _postHandlerPipeLineBuilder.Build(_postHandlerPipes),
             _loggerFactory.CreateLogger<CommandHandlerPipeWrapper<TCommand>>());
-    }
-    
-    private CommandPreHandlerPipelineDelegate<TCommand> GetCommandPreHandler<TCommand>(IServiceProvider serviceProvider) where TCommand : ICommand
-    {
-        ICommandPreHandlerPipelineBuilder<TCommand> preHandlerPipeLineBuilder = new CommandPreHandlerPipelineBuilder<TCommand>();
-        var preHandlerProviders = serviceProvider.GetRequiredService<IEnumerable<ICommandPreHandlerPipe<TCommand>>>();
-        
-        return preHandlerProviders
-            .Aggregate(preHandlerPipeLineBuilder, (builder, pipe) =>
-            {
-                return builder.UsePipe(next => { return (context, ct) => pipe.Handle(context, next, ct); });
-            })
-            .Build();
-    }
-    
-    private CommandHandlerPipelineDelegate<TCommand> GetCommandHandler<TCommand>(IServiceProvider serviceProvider) where TCommand : ICommand
-    {
-        ICommandHandlerPipelineBuilder<TCommand> handlerPipeLineBuilder = new CommandHandlerPipelineBuilder<TCommand>();
-        var handlerProviders = serviceProvider.GetRequiredService<IEnumerable<ICommandHandlerPipe<TCommand>>>();
-        
-        return handlerProviders
-            .Aggregate(handlerPipeLineBuilder, (builder, pipe) =>
-            {
-                return builder.UsePipe(next => { return (context, ct) => pipe.Handle(context, next, ct); });
-            })
-            .Build();
-    }
-    
-    private CommandPostHandlerPipelineDelegate<TCommand> GetCommandPostHandler<TCommand>(IServiceProvider serviceProvider) where TCommand : ICommand
-    {
-        ICommandPostHandlerPipelineBuilder<TCommand> postHandlerPipeLineBuilder = new CommandPostHandlerPipelineBuilder<TCommand>();
-        var postHandlerProviders = serviceProvider.GetRequiredService<IEnumerable<ICommandPostHandlerPipe<TCommand>>>();
-        
-        return postHandlerProviders
-            .Aggregate(postHandlerPipeLineBuilder, (builder, pipe) =>
-            {
-                return builder.UsePipe(next => { return (context, ct) => pipe.Handle(context, next, ct); });
-            })
-            .Build();
     }
 }

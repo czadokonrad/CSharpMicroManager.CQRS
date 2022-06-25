@@ -53,7 +53,9 @@ public class OrderedCommandPipeHandlerPipesDescriptorTests
 
     class FirstHandlerPipe<TCommand> : ICommandHandlerPipe<TCommand> where TCommand : ICommand
     {
-        public Task<Result<Unit>> Handle(CommandHandlerPipelineContext<TCommand> context, CommandHandlerPipelineDelegate<TCommand> next,
+        public Task<Result<Unit>> Handle(
+            TCommand command, 
+            CommandHandlerPipelineDelegate<TCommand> next,
             CancellationToken cancellationToken)
         {
             throw new System.NotImplementedException();
@@ -61,7 +63,9 @@ public class OrderedCommandPipeHandlerPipesDescriptorTests
     }
     class SecondHandlerPipe<TCommand> : ICommandHandlerPipe<TCommand> where TCommand : ICommand
     {
-        public Task<Result<Unit>> Handle(CommandHandlerPipelineContext<TCommand> context, CommandHandlerPipelineDelegate<TCommand> next,
+        public Task<Result<Unit>> Handle(
+            TCommand command, 
+            CommandHandlerPipelineDelegate<TCommand> next,
             CancellationToken cancellationToken)
         {
             throw new System.NotImplementedException();
@@ -70,7 +74,9 @@ public class OrderedCommandPipeHandlerPipesDescriptorTests
     
     class ThirdHandlerPipe<TCommand> : ICommandHandlerPipe<TCommand> where TCommand : ICommand
     {
-        public Task<Result<Unit>> Handle(CommandHandlerPipelineContext<TCommand> context, CommandHandlerPipelineDelegate<TCommand> next,
+        public Task<Result<Unit>> Handle(
+            TCommand command,
+            CommandHandlerPipelineDelegate<TCommand> next,
             CancellationToken cancellationToken)
         {
             throw new System.NotImplementedException();

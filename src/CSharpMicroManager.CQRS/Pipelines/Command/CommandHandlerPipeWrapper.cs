@@ -29,20 +29,18 @@ internal class CommandHandlerPipeWrapper<TCommand>
 
     public async Task<Result<Unit>> Handle(TCommand command, CancellationToken cancellationToken)
     {
-        var context = new CommandHandlerPipelineContext<TCommand>(command);
-        var result = await _preHandler(new CommandPreHandlerPipelineContext<TCommand>(context.Command),
-            cancellationToken);
+        var result = await _preHandler(command, cancellationToken);
 
         if (result.Errors.Any())
         {
             return result;
         }
 
-        var handlerResult = await _handler(context, cancellationToken);
+        var handlerResult = await _handler(command, cancellationToken);
 
         try
         {
-            var postHandlerResult = await _postHandler(new CommandPostHandlerPipelineContext<TCommand>(context.Command, result), cancellationToken);
+            var postHandlerResult = await _postHandler(command, cancellationToken);
 
             if (postHandlerResult.IsError)
             {
