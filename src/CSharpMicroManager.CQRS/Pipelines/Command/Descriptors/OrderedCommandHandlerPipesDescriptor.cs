@@ -7,7 +7,7 @@ public sealed class OrderedCommandHandlerPipesDescriptor : OrderedCommandPipeHan
 {
     public OrderedCommandHandlerPipesDescriptor(CommandPipelinesDescriptor pipelinesDescriptor) : base(pipelinesDescriptor)
     {
-        
+        PutCommandHandlingPipeOnEnd();
     }
 
     public OrderedCommandHandlerPipesDescriptor(Func<CommandPipelinesDescriptor, CommandPipelinesDescriptor> builder) 

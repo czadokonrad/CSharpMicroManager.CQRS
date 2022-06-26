@@ -51,7 +51,7 @@ internal class CommandHandlerPipeWrapper<TCommand>
         }
         catch(Exception ex)
         {
-            _logger.LogCritical(ex, "Unhandled error during executing CommandPostHandlerPipeline for command: {Command}", typeof(TCommand).FullName);
+            _logger.LogError(ex, "Unhandled error during executing CommandPostHandlerPipeline for command: {Command}", typeof(TCommand).FullName);
         }
 
         return handlerResult;

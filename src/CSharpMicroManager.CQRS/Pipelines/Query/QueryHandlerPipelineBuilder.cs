@@ -30,6 +30,16 @@ internal sealed class QueryHandlerPipelineBuilder<TQuery, TResult> : IQueryHandl
     {
         throw new NotImplementedException();
     }
+    
+    public QueryHandlerPipelineDelegate<TQuery, TResult> Build(IEnumerable<IQueryHandlerPipe<TQuery, TResult>> pipes) 
+    {
+        foreach (var pipe in pipes)
+        {
+            UsePipe(next => (query, ct) => pipe.Handle(query, next, ct));
+        }
+
+        return Build();
+    }
 
     public QueryHandlerPipelineDelegate<TQuery, TResult> Build()
     {

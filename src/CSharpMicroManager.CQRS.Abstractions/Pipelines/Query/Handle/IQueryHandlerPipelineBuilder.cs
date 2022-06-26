@@ -9,6 +9,8 @@ public interface IQueryHandlerPipelineBuilder<TQuery, TResult> where TQuery : IQ
     IQueryHandlerPipelineBuilder<TQuery, TResult> UsePipe(IQueryHandlerPipe<TQuery, TResult> pipe);
     IQueryHandlerPipelineBuilder<TQuery, TResult> UsePipe<TCommandHandlerPipe>() 
         where TCommandHandlerPipe : class, IQueryHandlerPipe<TQuery, TResult>, new();
+    
+    QueryHandlerPipelineDelegate<TQuery, TResult> Build(IEnumerable<IQueryHandlerPipe<TQuery, TResult>> pipes);
     QueryHandlerPipelineDelegate<TQuery, TResult> Build();
     IReadOnlyCollection<Func<QueryHandlerPipelineDelegate<TQuery, TResult>, QueryHandlerPipelineDelegate<TQuery, TResult>>> Pipes { get; }
 }

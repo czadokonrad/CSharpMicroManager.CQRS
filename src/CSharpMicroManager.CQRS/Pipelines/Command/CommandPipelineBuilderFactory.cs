@@ -34,12 +34,10 @@ internal sealed class CommandPipelineBuilderFactory<TCommand> where TCommand : I
         _loggerFactory = loggerFactory;
     }
 
-    public CommandHandlerPipeWrapper<TCommand> CreatePipeline()
-    {
-        return new CommandHandlerPipeWrapper<TCommand>(
+    public CommandHandlerPipeWrapper<TCommand> CreatePipeline() =>
+        new(
             _preHandlerPipeLineBuilder.Build(_preHandlerPipes),
             _handlerPipeLineBuilder.Build(_handlerPipes),
             _postHandlerPipeLineBuilder.Build(_postHandlerPipes),
             _loggerFactory.CreateLogger<CommandHandlerPipeWrapper<TCommand>>());
-    }
 }

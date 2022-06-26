@@ -2,69 +2,43 @@
 using CSharpMicroManager.CQRS.Abstractions.Pipelines.Query.PostHandle;
 using CSharpMicroManager.CQRS.Abstractions.Pipelines.Query.PreHandle;
 using CSharpMicroManager.CQRS.Abstractions.Queries;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace CSharpMicroManager.CQRS.Pipelines.Query;
 
-public class QueryPipelineBuilderFactory
+internal sealed class QueryPipelineBuilderFactory<TQuery, TResult> where TQuery : IQuery<TResult>
 {
-    private readonly IServiceProvider _serviceProvider;
+    private readonly IQueryPreHandlerPipelineBuilder<TQuery, TResult> _preHandlerPipelineBuilder;
+    private readonly IQueryHandlerPipelineBuilder<TQuery, TResult> _handlerPipelineBuilder;
+    private readonly IQueryPostHandlerPipelineBuilder<TQuery, TResult> _postHandlerPipelineBuilder;
+    private readonly IEnumerable<IQueryPreHandlerPipe<TQuery, TResult>> _queryPreHandlerPipes;
+    private readonly IEnumerable<IQueryHandlerPipe<TQuery, TResult>> _queryHandlerPipes;
+    private readonly IEnumerable<IQueryPostHandlerPipe<TQuery, TResult>> _queryPostHandlerPipes;
+    private readonly ILoggerFactory _loggerFactory;
 
     public QueryPipelineBuilderFactory(
-        IServiceProvider serviceProvider)
+        IQueryPreHandlerPipelineBuilder<TQuery, TResult> preHandlerPipelineBuilder,
+        IQueryHandlerPipelineBuilder<TQuery, TResult> handlerPipelineBuilder,
+        IQueryPostHandlerPipelineBuilder<TQuery, TResult> postHandlerPipelineBuilder,
+        IEnumerable<IQueryPreHandlerPipe<TQuery, TResult>> queryPreHandlerPipes,
+        IEnumerable<IQueryHandlerPipe<TQuery, TResult>> queryHandlerPipes,
+        IEnumerable<IQueryPostHandlerPipe<TQuery, TResult>> queryPostHandlerPipes,
+        ILoggerFactory loggerFactory)
+
     {
-        _serviceProvider = serviceProvider;
+        _preHandlerPipelineBuilder = preHandlerPipelineBuilder;
+        _handlerPipelineBuilder = handlerPipelineBuilder;
+        _postHandlerPipelineBuilder = postHandlerPipelineBuilder;
+        _queryPreHandlerPipes = queryPreHandlerPipes;
+        _queryHandlerPipes = queryHandlerPipes;
+        _queryPostHandlerPipes = queryPostHandlerPipes;
+        _loggerFactory = loggerFactory;
     }
 
-    public QueryHandlerPipelineWrapper<TQuery, TResult> CreatePipeline<TQuery, TResult>()
-        where TQuery : IQuery<TResult>
-    {
-        return new QueryHandlerPipelineWrapper<TQuery, TResult>(
-            GetQueryPreHandler<TQuery, TResult>(_serviceProvider),
-            GetQueryHandler<TQuery, TResult>(_serviceProvider),
-            GetQueryPostHandler<TQuery, TResult>(_serviceProvider));
-
-    }
-    
-     private QueryPreHandlerPipelineDelegate<TQuery, TResult> GetQueryPreHandler<TQuery, TResult>(IServiceProvider serviceProvider) 
-         where TQuery : IQuery<TResult>
-    {
-        IQueryPreHandlerPipelineBuilder<TQuery, TResult> preHandlerPipeLineBuilder = new QueryPreHandlerPipelineBuilder<TQuery, TResult>();
-        var preHandlerProviders = serviceProvider.GetRequiredService<IEnumerable<IQueryPreHandlerPipe<TQuery, TResult>>>();
-        
-        return preHandlerProviders
-            .Aggregate(preHandlerPipeLineBuilder, (builder, pipe) =>
-            {
-                return builder.UsePipe(next => { return (context, ct) => pipe.Handle(context, next, ct); });
-            })
-            .Build();
-    }
-    
-    private QueryHandlerPipelineDelegate<TQuery, TResult> GetQueryHandler<TQuery, TResult>(IServiceProvider serviceProvider)
-        where TQuery : IQuery<TResult>
-    {
-        IQueryHandlerPipelineBuilder<TQuery, TResult> handlerPipeLineBuilder = new QueryHandlerPipelineBuilder<TQuery, TResult>();
-        var handlerProviders = serviceProvider.GetRequiredService<IEnumerable<IQueryHandlerPipe<TQuery, TResult>>>();
-        
-        return handlerProviders
-            .Aggregate(handlerPipeLineBuilder, (builder, pipe) =>
-            {
-                return builder.UsePipe(next => { return (context, ct) => pipe.Handle(context, next, ct); });
-            })
-            .Build();
-    }
-    
-    private QueryPostHandlerPipelineDelegate<TQuery, TResult> GetQueryPostHandler<TQuery, TResult>(IServiceProvider serviceProvider) 
-        where TQuery : IQuery<TResult>
-    {
-        IQueryPostHandlerPipelineBuilder<TQuery, TResult> postHandlerPipeLineBuilder = new QueryPostHandlerPipelineBuilder<TQuery, TResult>();
-        var postHandlerProviders = serviceProvider.GetRequiredService<IEnumerable<IQueryPostHandlerPipe<TQuery, TResult>>>();
-        
-        return postHandlerProviders
-            .Aggregate(postHandlerPipeLineBuilder, (builder, pipe) =>
-            {
-                return builder.UsePipe(next => { return (context, ct) => pipe.Handle(context, next, ct); });
-            })
-            .Build();
-    }
+    public QueryHandlerPipelineWrapper<TQuery, TResult> CreatePipeline() =>
+        new(
+            _preHandlerPipelineBuilder.Build(_queryPreHandlerPipes),
+            _handlerPipelineBuilder.Build(_queryHandlerPipes),
+            _postHandlerPipelineBuilder.Build(_queryPostHandlerPipes),
+            _loggerFactory.CreateLogger<QueryHandlerPipelineWrapper<TQuery, TResult>>());
 }

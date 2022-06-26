@@ -8,6 +8,9 @@ using CSharpMicroManager.CQRS.Abstractions.Dispatching.Query;
 using CSharpMicroManager.CQRS.Abstractions.Pipelines.Command.Handle;
 using CSharpMicroManager.CQRS.Abstractions.Pipelines.Command.PostHandle;
 using CSharpMicroManager.CQRS.Abstractions.Pipelines.Command.PreHandle;
+using CSharpMicroManager.CQRS.Abstractions.Pipelines.Query.Handle;
+using CSharpMicroManager.CQRS.Abstractions.Pipelines.Query.PostHandle;
+using CSharpMicroManager.CQRS.Abstractions.Pipelines.Query.PreHandle;
 using CSharpMicroManager.CQRS.Attributes.Command;
 using CSharpMicroManager.CQRS.Decorators.Command;
 using CSharpMicroManager.CQRS.Dispatching.Command;
@@ -93,8 +96,12 @@ public static class ServiceCollectionExtensions
         });
 
         return services
+            .AddTransient<ServiceResolver>(sp => sp.GetRequiredService)
             .AddTransient<IQueryDispatcher, QueryDispatcher>()
-            .AddTransient<QueryPipelineBuilderFactory>();
+            .AddTransient(typeof(IQueryPreHandlerPipelineBuilder<,>), typeof(QueryPreHandlerPipelineBuilder<,>))
+            .AddTransient(typeof(IQueryHandlerPipelineBuilder<,>), typeof(QueryHandlerPipelineBuilder<,>))
+            .AddTransient(typeof(IQueryPostHandlerPipelineBuilder<,>), typeof(QueryPostHandlerPipelineBuilder<,>))
+            .AddTransient(typeof(QueryPipelineBuilderFactory<,>));
     }
     
     

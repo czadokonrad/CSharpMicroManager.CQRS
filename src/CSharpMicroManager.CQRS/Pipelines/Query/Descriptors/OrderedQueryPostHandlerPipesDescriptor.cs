@@ -1,6 +1,6 @@
 ﻿namespace CSharpMicroManager.CQRS.Pipelines.Query.Descriptors;
 
-public class OrderedQueryPostHandlerPipesDescriptor : OrderedQueryHandlerPipesDescriptor
+public class OrderedQueryPostHandlerPipesDescriptor : OrderedQueryPipeHandlerPipesDescriptor
 {
     public OrderedQueryPostHandlerPipesDescriptor(QueryPipelinesDescriptor pipelinesDescriptor) : base(pipelinesDescriptor)
     {
