@@ -15,6 +15,13 @@ public class OrderedQueryHandlerPipesDescriptor : OrderedQueryPipeHandlerPipesDe
         base.WithNext(pipeType);
         return PutQueryHandlingPipeOnEnd();
     }
+    
+    public OrderedQueryHandlerPipesDescriptor AfterQueryHandlingPipe(Type pipeType)
+    {
+        PutQueryHandlingPipeOnEnd();
+        base.WithNext(pipeType);
+        return this;
+    }
 
     private OrderedQueryHandlerPipesDescriptor PutQueryHandlingPipeOnEnd()
     {

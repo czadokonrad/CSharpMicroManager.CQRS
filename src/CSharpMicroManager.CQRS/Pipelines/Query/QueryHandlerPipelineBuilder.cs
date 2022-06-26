@@ -46,11 +46,11 @@ internal sealed class QueryHandlerPipelineBuilder<TQuery, TResult> : IQueryHandl
         QueryHandlerPipelineDelegate<TQuery, TResult> pipeline = (_, _) => 
             Task.FromResult(new Result<Option<TResult>>(F.None));
 
-        for (int i = _pipes.Count - 1; i >= 0; i--)
+        for (var i = _pipes.Count - 1; i >= 0; i--)
         {
             pipeline = _pipes[i](pipeline);
         }
-
+        
         return pipeline;
     }
     
