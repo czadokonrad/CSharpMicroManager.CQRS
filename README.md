@@ -12,8 +12,7 @@ Simple command/query pipeline implementation in .NET
   [![Build Status](https://dev.azure.com/czadokonrad/CSharpMicroManager/_apis/build/status/CSharpMicroManager.CQRS.Extensions?repoName=CSharpMicroManager.CQRS&branchName=main)](https://dev.azure.com/czadokonrad/CSharpMicroManager/_build/latest?definitionId=24&repoName=CSharpMicroManager.CQRS&branchName=main)
   [![CSharpMicroManager.CQRS.Extensions package in csharp-micromanager-feed feed in Azure Artifacts](https://feeds.dev.azure.com/czadokonrad/d7b143bd-01a8-4e66-818b-e4d2d672b42c/_apis/public/Packaging/Feeds/csharp-micromanager-feed/Packages/c6fc1b40-a758-4b0e-9fe7-8a4479b95793/Badge)](https://dev.azure.com/czadokonrad/CSharpMicroManager/_artifacts/feed/csharp-micromanager-feed/NuGet/CSharpMicroManager.CQRS.Extensions/1.0.0)
 
-Provides a simple way to perform some action in the convenient moment of the execution of `ICommandHandler<TCommand>` 
-
+Provides a simple way to perform some action in the convenient moment of the execution of `ICommandHandler<TCommand>`
 
 # CommandHandler Pipelines
 
@@ -28,3 +27,77 @@ For example exception handling, unit of work or domain events dispatching scenar
 ## PostCommandHandlerPipeline
 This pipeline purpose is for some post handling actions which will be executed after
 `CommandHandlerPipeline`. These are some optional actions which fail will not be observed as `ICommandHandler<TCommand>` execution error.
+
+
+# How to use
+
+## Registration
+
+All instances of 
+```csharp
+public interface ICommandHandler<TCommand>
+public interface ICommandPreHandlerPipe<TCommand>
+public interface ICommandHandlerPipe<TCommand>
+public interface ICommandPostHandlerPipe<TCommand>
+```
+are registered as transient services.
+
+### Commands
+
+```csharp
+serviceCollection.AddCommandHandler<TCommand, TCommandHandler>()
+```
+
+### Command pipelines
+
+#### PreHandler pipeline
+
+```csharp
+serviceCollection.AddCommandPipelines(d => d
+                    .SetupPreHandlers(v => v
+                        .WithNext(typeof(TPrehandler1))
+                        .WithNext(typeof(TPrehandler2))
+                        .WithNext(typeof(TPrehandler3))
+                    ))
+```
+
+#### Handler pipeline
+
+```csharp
+serviceCollection.AddCommandPipelines(d => d
+                    .SetupHandlers(v => v
+                        .WithNext(typeof(THandler1))
+                        .WithNext(typeof(THandler2))
+                        .WithNext(typeof(THandler3))
+                    ))
+```
+* When you want to execute some behavior inside 
+```csharp
+ICommandHandlerPipeline<TCommand>
+```
+when target
+```csharp
+ICommandHandler<TCommand>
+```
+completes use below syntax
+
+```csharp
+serviceCollection.AddCommandPipelines(d => d
+                    .SetupHandlers(v => v
+                        .WithNext(typeof(THandler1))
+                        .WithNext(typeof(THandler2))
+                        .WithNext(typeof(THandler3))
+                        .AfterCommandHandler(typeof(THandler4))
+                    ))
+```
+
+#### PostHandler pipeline
+
+```csharp
+serviceCollection.AddCommandPipelines(d => d
+                    .SetupPostHandlers(v => v
+                        .WithNext(typeof(TPostHandler1))
+                        .WithNext(typeof(TPostHandler2))
+                        .WithNext(typeof(TPostHandler3))
+                    ))
+```
